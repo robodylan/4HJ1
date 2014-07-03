@@ -21,6 +21,9 @@ namespace _4HJ1
         public static int Score;
         public static Sprite BG;
         public static Font F;
+        public static int spawnTimeout = 60;
+        public static Music m;
+        public static bool lose;
         public Game(uint W, uint H, string Title)
         {
             window = new RenderWindow(new VideoMode(W,H), Title);
@@ -31,6 +34,10 @@ namespace _4HJ1
         public void Start()
         {
             //Load Assets and Set Variables
+            lose = false;
+            m = new Music("Content/mixdown.ogg");
+            m.Loop = true;
+            m.Play();
             F = new Font("Content/Animated.ttf");
             BG = new Sprite(new Texture(new Image("Content/BG.png")), new IntRect(0, 0, W, H));
             pointSprite = new Sprite(new Texture(new Image("Content/Point.png")), new IntRect(0,0,16,16));
@@ -38,22 +45,50 @@ namespace _4HJ1
             window.KeyPressed += KeyboardInput;
             window.KeyReleased += KeyboardReleaseInput;
             Player.Load();
+            while(window.IsOpen())
+            {
+                window.DispatchEvents();
+                window.Clear(new Color(0,0,0));
+                Draw();
+                window.Display();
+            }
         }
 
         public void Draw()
         {
+            if(lose == true)
+            {
+                Score = 0;
+                Point.Speed = .01f;
+            }
+            Point.Speed += 0.0001f;
+            //Spawn Random Runner
+            if (spawnTimeout > 1)
+            {
+                spawnTimeout--;
+            }
+            else
+            {
+                spawnTimeout = 100;
+                points.Add(new Point(0, new Random(DateTime.Now.Millisecond).Next(0, 600)));
+            }
             window.Draw(BG);
             for (int l = points.Count - 2; l >= 0; l--)
             {
+
                 Point C = points[l];
                 if (C.X + 14 > Player.X && C.X < Player.X + 64 && C.Y + 14 > Player.Y && C.Y < Player.Y + 64)
                 {
-                    points.Remove(points[l]); 
-                    Score++;
+                    points.Remove(points[l]);
+                    Score = Score + 1;
                 }
                 if(C.X > W)
                 {
                     points.Remove(points[l]);
+                }
+                if(C.X > 725)
+                {
+                    lose = true;
                 }
                 points[l].updatePosition();
                 pointSprite.Position = new Vector2f((int)points[l].X,(int)points[l].Y);

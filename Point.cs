@@ -11,7 +11,8 @@ namespace _4HJ1
 {
     class Point
     {
-        public float X, Y, ID;
+        public float X, Y;
+        public static float Speed = 0.01f;
         public Point(int x,int y)
         {
             this.X = x;
@@ -19,7 +20,7 @@ namespace _4HJ1
         }
         public void updatePosition()
         {
-            X += .5f;
+            X += Speed;
         }
     }
 }
