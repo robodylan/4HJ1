@@ -11,11 +11,15 @@ namespace _4HJ1
 {
     class Point
     {
-        public int X, Y;
-        public Sprite sprite;
-        public Point()
+        public float X, Y, ID;
+        public Point(int x,int y)
         {
-
+            this.X = x;
+            this.Y = y;
+        }
+        public void updatePosition()
+        {
+            X += .5f;
         }
     }
 }
